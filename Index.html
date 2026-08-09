@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IPCI SERVICE</title>
+</head>
+<body>
+  <h1>IPCI SERVICE</h1>
+  <h2>Commander votre abonnement</h2>
+
+  <form id="commandeForm">
+    <label>Nom :</label><br>
+    <input type="text" id="nom" required><br><br>
+
+    <label>Numéro WhatsApp :</label><br>
+    <input type="tel" id="telephone" required><br><br>
+
+    <label>Offre :</label><br>
+    <select id="offre">
+      <option value="30000">Abonnement 1 an - 30 000 FCFA</option>
+      <option value="20000">Abonnement 6 mois - 20 000 FCFA</option>
+    </select><br><br>
+
+    <button type="submit">Payer maintenant</button>
+  </form>
+
+  <script>
+    document.getElementById("commandeForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const nom = document.getElementById("nom").value;
+      const telephone = document.getElementById("telephone").value;
+      const offre = document.getElementById("offre").value;
+
+      alert(
+        "Commande enregistrée !\\n\\n" +
+        "Nom : " + nom + "\\n" +
+        "Téléphone : " + telephone + "\\n" +
+        "Montant : " + offre + " FCFA"
+      );
+    });
+  </script>
+</body>
+</html>
