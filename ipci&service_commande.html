@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IPCI SERVICE - Commande</title>
+</head>
+
+<body>
+  <h1>IPCI SERVICE</h1>
+  <h2>Commander votre abonnement</h2>
+
+  <form id="commandeForm">
+    <label>Nom :</label><br>
+    <input type="text" id="nom" required><br><br>
+
+    <label>Numéro WhatsApp :</label><br>
+    <input type="tel" id="telephone" required><br><br>
+
+    <label>Choisissez votre offre :</label><br>
+    <select id="offre" required>
+      <option value="">-- Choisir --</option>
+      <option value="20000">IPTV 6 mois - 20 000 FCFA</option>
+      <option value="30000">IPTV 1 an - 30 000 FCFA</option>
+      <option value="25000">Box TV - 25 000 FCFA</option>
+    </select><br><br>
+
+    <button type="submit">PAYER MAINTENANT</button>
+  </form>
+
+  <script>
+    document.getElementById("commandeForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const nom = document.getElementById("nom").value;
+      const telephone = document.getElementById("telephone").value;
+      const offre = document.getElementById("offre").value;
+
+      const message =
+        "Bonjour IPCI SERVICE,%0A%0A" +
+        "Nom : " + encodeURIComponent(nom) + "%0A" +
+        "Téléphone : " + encodeURIComponent(telephone) + "%0A" +
+        "Montant : " + encodeURIComponent(offre) + " FCFA";
+
+      window.location.href =
+        "https://wa.me/2250153698875?text=" + message;
+    });
+  </script>
+</body>
+</html>
