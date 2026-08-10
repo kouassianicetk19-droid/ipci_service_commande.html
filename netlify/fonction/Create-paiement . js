@@ -12,14 +12,16 @@ error: "Méthode non autorisée"
 }
 
 try {
+const body = JSON.parse(event.body || "{}");
+
 const {
-nom,
-telephone,
-offre,
-prix,
-paiement,
-message
-} = JSON.parse(event.body || "{}");
+  nom,
+  telephone,
+  offre,
+  prix,
+  paiement,
+  message
+} = body;
 
 if (!nom || !telephone || !offre || !prix || !paiement) {
   return {
@@ -40,7 +42,6 @@ const response = await fetch(
 
     headers: {
       "Content-Type": "application/json",
-
       "PAYDUNYA-MASTER-KEY": process.env.paydunya,
       "PAYDUNYA-PUBLIC-KEY": process.env.publique,
       "PAYDUNYA-PRIVATE-KEY": process.env.private,
@@ -58,8 +59,12 @@ const response = await fetch(
           " - Téléphone : " +
           telephone +
           " - Paiement : " +
-          paiement +
-          (message ? " - Message : " + message : "")
+          paiement,
+
+        customer: {
+          name: nom,
+          phone: telephone
+        }
       },
 
       store: {
@@ -69,27 +74,56 @@ const response = await fetch(
   }
 );
 
-const data = await response.json();
+// On lit d'abord la réponse comme texte
+const responseText = await response.text();
 
-if (!response.ok) {
+// On essaie ensuite de convertir le texte en JSON
+let data;
+
+try {
+  data = JSON.parse(responseText);
+} catch (jsonError) {
   return {
-    statusCode: response.status,
+    statusCode: 502,
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      error: "PayDunya a refusé la création du paiement",
+      error: "Réponse non JSON reçue de PayDunya",
+      status: response.status,
+      response: responseText
+    })
+  };
+}
+
+// Vérification de la réponse PayDunya
+if (data.response_code !== "00") {
+  return {
+    statusCode: 400,
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      error: "PayDunya a refusé le paiement",
+      response_code: data.response_code,
+      response_text: data.response_text,
       details: data
     })
   };
 }
 
+// PayDunya fournit l'URL de paiement dans response_text
 return {
   statusCode: 200,
   headers: {
     "Content-Type": "application/json"
   },
-  body: JSON.stringify(data)
+  body: JSON.stringify({
+    success: true,
+    url: data.response_text,
+    token: data.token,
+    data: data
+  })
 };
 
 } catch (error) {
@@ -100,7 +134,7 @@ return {
     "Content-Type": "application/json"
   },
   body: JSON.stringify({
-    error: "Erreur lors de la création du paiement",
+    error: "Erreur serveur",
     details: error.message
   })
 };
