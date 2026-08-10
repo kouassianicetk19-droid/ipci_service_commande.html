@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="fr">
+<!DOCTYPE html><html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IPCI SERVICE - Commande</title>
-
-  <style>
+  <title>IPCI SERVICE - Commande</title>  <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -81,10 +78,21 @@
       background: #062b68;
     }
 
+    button:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+
     .contact {
       text-align: center;
       margin-top: 25px;
       font-size: 16px;
+    }
+
+    #resultat {
+      margin-top: 20px;
+      text-align: center;
+      font-weight: bold;
     }
 
     footer {
@@ -94,118 +102,123 @@
       color: white;
       margin-top: 30px;
     }
-  </style>
-</head>
+  </style></head><body><header>
+  <h1>IPCI SERVICE</h1>
+  <p>La boîte des opportunités numériques à des prix raisonnables</p>
+</header><div class="container">  <div class="card"><h2>Commander votre abonnement</h2>
 
-<body>
+<form id="commandeForm">
 
-  <header>
-    <h1>IPCI SERVICE</h1>
-    <p>Votre solution TV et divertissement</p>
-  </header>
+  <label for="nom">Nom complet</label>
+  <input type="text" id="nom" required>
 
-  <div class="container">
+  <label for="telephone">Numéro de téléphone</label>
+  <input type="tel" id="telephone" required>
 
-    <div class="card">
+  <label for="offre">Choisissez votre offre</label>
+  <select id="offre" required>
+    <option value="">-- Choisir une offre --</option>
+    <option value="IPTV 6 mois" data-prix="20000">
+      IPTV 6 mois - 20 000 FCFA
+    </option>
+    <option value="IPTV 1 an" data-prix="30000">
+      IPTV 1 an - 30 000 FCFA
+    </option>
+    <option value="Box TV" data-prix="25000">
+      Box TV - 25 000 FCFA
+    </option>
+  </select>
 
-      <h2>Commander votre abonnement</h2>
+  <label for="paiement">Mode de paiement</label>
+  <select id="paiement" required>
+    <option value="">-- Choisir --</option>
+    <option value="Orange Money">Orange Money</option>
+    <option value="Wave">Wave</option>
+    <option value="MTN Money">MTN Money</option>
+  </select>
 
-      <form id="commandeForm">
+  <label for="message">Message</label>
+  <textarea
+    id="message"
+    rows="4"
+    placeholder="Informations complémentaires"
+  ></textarea>
 
-        <label for="nom">Nom complet</label>
-        <input
-          type="text"
-          id="nom"
-          name="nom"
-          placeholder="Votre nom complet"
-          required
-        >
+  <button type="submit" id="payerBtn">
+    Payer maintenant
+  </button>
 
-        <label for="telephone">Numéro de téléphone</label>
-        <input
-          type="tel"
-          id="telephone"
-          name="telephone"
-          placeholder="Votre numéro"
-          required
-        >
+</form>
 
-        <label for="offre">Choisissez votre offre</label>
-        <select id="offre" name="offre" required>
-          <option value="">-- Choisir une offre --</option>
-          <option value="IPTV 6 mois - 20 000 FCFA">
-            IPTV 6 mois - 20 000 FCFA
-          </option>
-          <option value="IPTV 1 an - 30 000 FCFA">
-            IPTV 1 an - 30 000 FCFA
-          </option>
-          <option value="Box TV - 25 000 FCFA">
-            Box TV - 25 000 FCFA
-          </option>
-        </select>
+<div id="resultat"></div>
 
-        <label for="paiement">Mode de paiement</label>
-        <select id="paiement" name="paiement" required>
-          <option value="">-- Choisir --</option>
-          <option value="Orange Money">Orange Money</option>
-          <option value="Wave">Wave</option>
-          <option value="MTN Money">MTN Money</option>
-        </select>
+<div class="contact">
+  <p><strong>IPCI SERVICE</strong></p>
+  <p>Abonnements IPTV • Box TV • Solutions TV</p>
+</div>
 
-        <label for="message">Message</label>
-        <textarea
-          id="message"
-          name="message"
-          rows="4"
-          placeholder="Informations complémentaires"
-        ></textarea>
+  </div></div><footer>
+  © 2026 IPCI SERVICE - Tous droits réservés
+</footer><script>
+document.getElementById("commandeForm").addEventListener("submit", async function(event) {
 
-        <button type="submit">
-          Envoyer ma commande
-        </button>
+  event.preventDefault();
 
-      </form>
+  const nom = document.getElementById("nom").value.trim();
+  const telephone = document.getElementById("telephone").value.trim();
+  const offreElement = document.getElementById("offre");
+  const offre = offreElement.value;
+  const prix = Number(
+    offreElement.options[offreElement.selectedIndex].dataset.prix
+  );
+  const paiement = document.getElementById("paiement").value;
+  const message = document.getElementById("message").value.trim();
 
-      <div class="contact">
-        <p><strong>IPCI SERVICE</strong></p>
-        <p>Abonnements IPTV • Box TV • Solutions TV</p>
-      </div>
+  const bouton = document.getElementById("payerBtn");
+  const resultat = document.getElementById("resultat");
 
-    </div>
+  bouton.disabled = true;
+  bouton.textContent = "Préparation du paiement...";
+  resultat.textContent = "";
 
-  </div>
+  try {
 
-  <footer>
-    © 2026 IPCI SERVICE - Tous droits réservés
-  </footer>
-
-  <script>
-    document.getElementById("commandeForm").addEventListener("submit", function(event) {
-      event.preventDefault();
-
-      const nom = document.getElementById("nom").value;
-      const telephone = document.getElementById("telephone").value;
-      const offre = document.getElementById("offre").value;
-      const paiement = document.getElementById("paiement").value;
-      const message = document.getElementById("message").value;
-
-      const texte =
-        "Bonjour IPCI SERVICE,%0A%0A" +
-        "Je souhaite passer une commande.%0A%0A" +
-        "Nom : " + encodeURIComponent(nom) + "%0A" +
-        "Téléphone : " + encodeURIComponent(telephone) + "%0A" +
-        "Offre : " + encodeURIComponent(offre) + "%0A" +
-        "Paiement : " + encodeURIComponent(paiement) + "%0A" +
-        "Message : " + encodeURIComponent(message);
-
-      alert("Votre commande est prête. Le paiement sera configuré ensuite.");
-
-      /*
-        Le numéro WhatsApp devra être ajouté ici
-        lorsque tu me donneras le numéro à utiliser.
-      */
+    const response = await fetch("/.netlify/functions/create-payment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        nom,
+        telephone,
+        offre,
+        prix,
+        paiement,
+        message
+      })
     });
-  </script>
 
-</body>
-            </html>
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Erreur lors de la création du paiement.");
+    }
+
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error("Lien de paiement non reçu.");
+    }
+
+  } catch (error) {
+
+    resultat.textContent = "Erreur : " + error.message;
+    resultat.style.color = "red";
+
+    bouton.disabled = false;
+    bouton.textContent = "Payer maintenant";
+  }
+
+});
+</script></body>
+</html>
