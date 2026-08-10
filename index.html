@@ -3,68 +3,182 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>IPCI SERVICE - Commande</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      background: #f4f7fb;
       margin: 0;
       padding: 20px;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #eef5ff, #f8fbff);
+      color: #222;
     }
 
     .container {
-      max-width: 500px;
+      max-width: 520px;
       margin: auto;
-      background: white;
+      background: #fff;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0755a5, #0b78d0);
+      color: white;
+      text-align: center;
+      padding: 30px 20px;
+    }
+
+    .logo {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    .header p {
+      margin: 10px 0 0;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 8px 15px;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.18);
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .content {
       padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
 
-    h1 {
+    .intro {
       text-align: center;
+      margin-bottom: 22px;
+    }
+
+    .intro h2 {
+      margin: 0 0 8px;
       color: #0755a5;
+      font-size: 22px;
     }
 
-    p {
-      text-align: center;
+    .intro p {
+      margin: 0;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .offers {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .offer {
+      padding: 14px;
+      border-radius: 12px;
+      background: #f3f7fc;
+      border-left: 5px solid #0755a5;
+    }
+
+    .offer strong {
+      display: block;
+      color: #0755a5;
+      margin-bottom: 4px;
+    }
+
+    .offer span {
+      font-weight: bold;
+      color: #222;
     }
 
     label {
       display: block;
-      margin-top: 15px;
+      margin-top: 16px;
+      margin-bottom: 7px;
       font-weight: bold;
+      color: #333;
     }
 
-    input, select, textarea {
+    input,
+    select,
+    textarea {
       width: 100%;
-      padding: 12px;
-      margin-top: 7px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      padding: 13px;
+      border: 1px solid #d5dce5;
+      border-radius: 10px;
+      font-size: 15px;
+      outline: none;
+      background: #fff;
     }
 
-    button {
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #0755a5;
+      box-shadow: 0 0 0 3px rgba(7,85,165,0.08);
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .whatsapp-btn {
       width: 100%;
-      margin-top: 20px;
-      padding: 14px;
+      margin-top: 24px;
+      padding: 16px;
       border: none;
-      border-radius: 8px;
-      background: #0755a5;
+      border-radius: 12px;
+      background: #25D366;
       color: white;
       font-size: 17px;
       font-weight: bold;
       cursor: pointer;
+      transition: 0.2s;
     }
 
-    button:disabled {
-      background: #999;
+    .whatsapp-btn:hover {
+      transform: translateY(-2px);
+      background: #20bd5a;
     }
 
-    #message {
+    .info {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f7f9fc;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 18px;
+      background: #f1f5f9;
+      color: #777;
+      font-size: 12px;
+    }
+
+    .success {
+      display: none;
       margin-top: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #e9f9ef;
+      color: #16803c;
       text-align: center;
       font-weight: bold;
     }
@@ -75,117 +189,178 @@
 
 <div class="container">
 
-  <h1>IPCI SERVICE</h1>
+  <div class="header">
+    <div class="logo">IPCI SERVICE</div>
 
-  <p>La boîte des opportunités numériques à des prix raisonnables.</p>
+    <p>
+      La boîte des opportunités numériques<br>
+      à des prix raisonnables.
+    </p>
 
-  <form id="commandeForm">
+    <div class="badge">
+      📲 Commande rapide sur WhatsApp
+    </div>
+  </div>
 
-    <label>Nom complet</label>
-    <input type="text" id="nom" required>
+  <div class="content">
 
-    <label>Téléphone</label>
-    <input type="tel" id="telephone" required>
+    <div class="intro">
+      <h2>🛒 Passez votre commande</h2>
+      <p>
+        Remplissez le formulaire et envoyez votre demande directement
+        à notre équipe WhatsApp.
+      </p>
+    </div>
 
-    <label>Offre</label>
-    <select id="offre" required>
-      <option value="">Choisir une offre</option>
-      <option value="IPTV 6 mois" data-prix="20000">IPTV 6 mois - 20 000 FCFA</option>
-      <option value="IPTV 1 an" data-prix="30000">IPTV 1 an - 30 000 FCFA</option>
-      <option value="Box TV Android" data-prix="25000">Box TV Android - 25 000 FCFA</option>
-    </select>
+    <div class="offers">
 
-    <label>Mode de paiement</label>
-    <select id="paiement" required>
-      <option value="">Choisir</option>
-      <option value="Orange Money">Orange Money</option>
-      <option value="MTN Money">MTN Money</option>
-      <option value="Wave">Wave</option>
-    </select>
+      <div class="offer">
+        <strong>📺 IPTV 6 mois</strong>
+        <span>20 000 FCFA</span>
+      </div>
 
-    <label>Message</label>
-    <textarea id="messageClient" rows="4"></textarea>
+      <div class="offer">
+        <strong>📺 IPTV 1 an</strong>
+        <span>30 000 FCFA</span>
+      </div>
 
-    <button type="submit" id="payerBtn">
-      Payer maintenant
-    </button>
+      <div class="offer">
+        <strong>📦 Box TV Android</strong>
+        <span>25 000 FCFA</span>
+      </div>
 
-    <div id="message"></div>
+    </div>
 
-  </form>
+    <form id="commandeForm">
+
+      <label for="nom">👤 Nom complet</label>
+      <input
+        type="text"
+        id="nom"
+        placeholder="Votre nom et prénom"
+        required
+      >
+
+      <label for="telephone">📱 Votre numéro WhatsApp</label>
+      <input
+        type="tel"
+        id="telephone"
+        placeholder="Exemple : 07 XX XX XX XX"
+        required
+      >
+
+      <label for="offre">🎯 Choisissez votre offre</label>
+
+      <select id="offre" required>
+        <option value="">Sélectionner une offre</option>
+
+        <option value="IPTV 6 mois - 20 000 FCFA">
+          IPTV 6 mois - 20 000 FCFA
+        </option>
+
+        <option value="IPTV 1 an - 30 000 FCFA">
+          IPTV 1 an - 30 000 FCFA
+        </option>
+
+        <option value="Box TV Android - 25 000 FCFA">
+          Box TV Android - 25 000 FCFA
+        </option>
+      </select>
+
+      <label for="paiement">💳 Mode de paiement souhaité</label>
+
+      <select id="paiement" required>
+        <option value="">Sélectionner</option>
+        <option value="Orange Money">Orange Money</option>
+        <option value="MTN Money">MTN Money</option>
+        <option value="Wave">Wave</option>
+      </select>
+
+      <label for="messageClient">💬 Message (facultatif)</label>
+
+      <textarea
+        id="messageClient"
+        rows="4"
+        placeholder="Une précision concernant votre commande..."
+      ></textarea>
+
+      <button type="submit" class="whatsapp-btn">
+        🟢 Commander sur WhatsApp
+      </button>
+
+      <div id="success" class="success">
+        Préparation de votre commande...
+      </div>
+
+    </form>
+
+    <div class="info">
+      🔒 <strong>Commande simple et rapide</strong><br>
+      Après l'envoi de votre demande, notre équipe vous répondra
+      directement sur WhatsApp pour vous accompagner dans la suite
+      de votre commande.
+      <br><br>
+      📞 WhatsApp : <strong>+225 01 53 69 88 75</strong>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    © 2026 IPCI SERVICE — Tous droits réservés.
+  </div>
 
 </div>
 
 <script>
-document.getElementById("commandeForm").addEventListener("submit", async function(e) {
+
+document.getElementById("commandeForm").addEventListener("submit", function(e) {
 
   e.preventDefault();
 
-  const bouton = document.getElementById("payerBtn");
-  const message = document.getElementById("message");
-
-  const offreSelect = document.getElementById("offre");
-  const option = offreSelect.options[offreSelect.selectedIndex];
-
-  const nom = document.getElementById("nom").value;
-  const telephone = document.getElementById("telephone").value;
-  const offre = offreSelect.value;
-  const prix = option.getAttribute("data-prix");
+  const nom = document.getElementById("nom").value.trim();
+  const telephone = document.getElementById("telephone").value.trim();
+  const offre = document.getElementById("offre").value;
   const paiement = document.getElementById("paiement").value;
-  const messageClient = document.getElementById("messageClient").value;
+  const messageClient = document.getElementById("messageClient").value.trim();
 
-  bouton.disabled = true;
-  bouton.textContent = "Connexion au paiement...";
-  message.textContent = "";
+  const success = document.getElementById("success");
 
-  try {
-
-    const response = await fetch("/.netlify/functions/create-paiement", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        nom: nom,
-        telephone: telephone,
-        offre: offre,
-        prix: prix,
-        paiement: paiement,
-        message: messageClient
-      })
-    });
-
-    const text = await response.text();
-
-    let data;
-
-    try {
-      data = JSON.parse(text);
-    } catch (error) {
-      throw new Error("Netlify ne renvoie pas du JSON. Vérifie la fonction create-paiement.");
-    }
-
-    if (!response.ok || !data.success) {
-      throw new Error(data.error || "Erreur lors de la création du paiement.");
-    }
-
-    if (data.url) {
-      window.location.href = data.url;
-      return;
-    }
-
-    throw new Error("Aucune URL de paiement reçue.");
-
-  } catch (error) {
-
-    message.style.color = "red";
-    message.textContent = "Erreur : " + error.message;
-
-    bouton.disabled = false;
-    bouton.textContent = "Payer maintenant";
+  if (!nom || !telephone || !offre || !paiement) {
+    alert("Veuillez remplir tous les champs obligatoires.");
+    return;
   }
 
+  success.style.display = "block";
+
+  const message =
+`Bonjour IPCI SERVICE 👋
+
+Je souhaite passer une commande.
+
+👤 Nom : ${nom}
+📱 Téléphone : ${telephone}
+🎯 Offre : ${offre}
+💳 Mode de paiement : ${paiement}
+
+💬 Message :
+${messageClient || "Aucun message supplémentaire."}
+
+Merci de me confirmer la disponibilité et les modalités de paiement.`;
+
+  const numeroWhatsApp = "2250153698875";
+
+  const url =
+    "https://wa.me/" +
+    numeroWhatsApp +
+    "?text=" +
+    encodeURIComponent(message);
+
+  setTimeout(function() {
+    window.location.href = url;
+  }, 500);
+
 });
+
 </script>
 
 </body>
