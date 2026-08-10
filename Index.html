@@ -1,8 +1,11 @@
-<!DOCTYPE html><html lang="fr">
+<!DOCTYPE html>
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IPCI SERVICE - Commande</title>  <style>
+  <title>IPCI SERVICE - Commande</title>
+
+  <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -102,123 +105,177 @@
       color: white;
       margin-top: 30px;
     }
-  </style></head><body><header>
+  </style>
+</head>
+
+<body>
+
+<header>
   <h1>IPCI SERVICE</h1>
   <p>La boîte des opportunités numériques à des prix raisonnables</p>
-</header><div class="container">  <div class="card"><h2>Commander votre abonnement</h2>
+</header>
 
-<form id="commandeForm">
+<div class="container">
+  <div class="card">
 
-  <label for="nom">Nom complet</label>
-  <input type="text" id="nom" required>
+    <h2>Commander votre abonnement</h2>
 
-  <label for="telephone">Numéro de téléphone</label>
-  <input type="tel" id="telephone" required>
+    <form id="commandeForm">
 
-  <label for="offre">Choisissez votre offre</label>
-  <select id="offre" required>
-    <option value="">-- Choisir une offre --</option>
-    <option value="IPTV 6 mois" data-prix="20000">
-      IPTV 6 mois - 20 000 FCFA
-    </option>
-    <option value="IPTV 1 an" data-prix="30000">
-      IPTV 1 an - 30 000 FCFA
-    </option>
-    <option value="Box TV" data-prix="25000">
-      Box TV - 25 000 FCFA
-    </option>
-  </select>
+      <label for="nom">Nom complet</label>
+      <input type="text" id="nom" required>
 
-  <label for="paiement">Mode de paiement</label>
-  <select id="paiement" required>
-    <option value="">-- Choisir --</option>
-    <option value="Orange Money">Orange Money</option>
-    <option value="Wave">Wave</option>
-    <option value="MTN Money">MTN Money</option>
-  </select>
+      <label for="telephone">Numéro de téléphone</label>
+      <input type="tel" id="telephone" required>
 
-  <label for="message">Message</label>
-  <textarea
-    id="message"
-    rows="4"
-    placeholder="Informations complémentaires"
-  ></textarea>
+      <label for="offre">Choisissez votre offre</label>
+      <select id="offre" required>
+        <option value="">-- Choisir une offre --</option>
 
-  <button type="submit" id="payerBtn">
-    Payer maintenant
-  </button>
+        <option value="IPTV 6 mois" data-prix="20000">
+          IPTV 6 mois - 20 000 FCFA
+        </option>
 
-</form>
+        <option value="IPTV 1 an" data-prix="30000">
+          IPTV 1 an - 30 000 FCFA
+        </option>
 
-<div id="resultat"></div>
+        <option value="Box TV" data-prix="25000">
+          Box TV - 25 000 FCFA
+        </option>
+      </select>
 
-<div class="contact">
-  <p><strong>IPCI SERVICE</strong></p>
-  <p>Abonnements IPTV • Box TV • Solutions TV</p>
+      <label for="paiement">Mode de paiement</label>
+      <select id="paiement" required>
+        <option value="">-- Choisir --</option>
+        <option value="Orange Money">Orange Money</option>
+        <option value="Wave">Wave</option>
+        <option value="MTN Money">MTN Money</option>
+      </select>
+
+      <label for="message">Message</label>
+
+      <textarea
+        id="message"
+        rows="4"
+        placeholder="Informations complémentaires"
+      ></textarea>
+
+      <button type="submit" id="payerBtn">
+        Payer maintenant
+      </button>
+
+    </form>
+
+    <div id="resultat"></div>
+
+    <div class="contact">
+      <p><strong>IPCI SERVICE</strong></p>
+      <p>Abonnements IPTV • Box TV • Solutions TV</p>
+    </div>
+
+  </div>
 </div>
 
-  </div></div><footer>
+<footer>
   © 2026 IPCI SERVICE - Tous droits réservés
-</footer><script>
+</footer>
+
+<script>
+
 document.getElementById("commandeForm").addEventListener("submit", async function(event) {
 
   event.preventDefault();
 
   const nom = document.getElementById("nom").value.trim();
+
   const telephone = document.getElementById("telephone").value.trim();
+
   const offreElement = document.getElementById("offre");
+
   const offre = offreElement.value;
+
   const prix = Number(
     offreElement.options[offreElement.selectedIndex].dataset.prix
   );
+
   const paiement = document.getElementById("paiement").value;
+
   const message = document.getElementById("message").value.trim();
 
   const bouton = document.getElementById("payerBtn");
+
   const resultat = document.getElementById("resultat");
 
   bouton.disabled = true;
+
   bouton.textContent = "Préparation du paiement...";
+
   resultat.textContent = "";
 
   try {
 
-    const response = await fetch("/.netlify/functions/create-payment", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        nom,
-        telephone,
-        offre,
-        prix,
-        paiement,
-        message
-      })
-    });
+    const response = await fetch(
+      "/.netlify/functions/create-paiement",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          nom: nom,
+          telephone: telephone,
+          offre: offre,
+          prix: prix,
+          paiement: paiement,
+          message: message
+        })
+      }
+    );
+
+    const contentType = response.headers.get("content-type") || "";
+
+    if (!contentType.includes("application/json")) {
+      throw new Error(
+        "Netlify ne renvoie pas du JSON. Vérifiez que la fonction create-paiement existe."
+      );
+    }
 
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || "Erreur lors de la création du paiement.");
+      throw new Error(
+        data.error || "Erreur lors de la création du paiement."
+      );
     }
 
     if (data.url) {
+
       window.location.href = data.url;
+
     } else {
+
       throw new Error("Lien de paiement non reçu.");
+
     }
 
   } catch (error) {
 
     resultat.textContent = "Erreur : " + error.message;
+
     resultat.style.color = "red";
 
     bouton.disabled = false;
+
     bouton.textContent = "Payer maintenant";
+
   }
 
 });
-</script></body>
+
+</script>
+
+</body>
 </html>
