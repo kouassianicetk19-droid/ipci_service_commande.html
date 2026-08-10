@@ -16,56 +16,54 @@ exports.handler = async (event) => {
   }
 
   try {
-    // Vérification des clés PayDunya
-    if (
-      !process.env.paydunya ||
-      !process.env.Publique ||
-      !process.env.PRIVATE ||
-      !process.env.Token
-    ) {
+    // Vérifier les clés PayDunya
+    const masterKey = process.env.paydunya;
+    const publicKey = process.env.Publique;
+    const privateKey = process.env.PRIVATE;
+    const token = process.env.Token;
+
+    if (!masterKey || !publicKey || !privateKey || !token) {
       return {
         statusCode: 500,
         headers,
         body: JSON.stringify({
           success: false,
-          error: "Les clés PayDunya ne sont pas correctement configurées dans Netlify."
+          error: "Les clés PayDunya ne sont pas configurées correctement dans Netlify."
         })
       };
     }
 
-    // Lecture de la commande
+    // Récupérer les données envoyées par le formulaire
     let body;
 
     try {
       body = JSON.parse(event.body || "{}");
-    } catch (e) {
+    } catch (error) {
       return {
         statusCode: 400,
         headers,
         body: JSON.stringify({
           success: false,
-          error: "Les données reçues ne sont pas un JSON valide."
+          error: "Le serveur a reçu des données JSON invalides."
         })
       };
     }
 
-    const {
-      nom,
-      telephone,
-      offre,
-      prix,
-      paiement,
-      message
-    } = body;
+    const nom = body.nom;
+    const telephone = body.telephone;
+    const offre = body.offre;
+    const prix = body.prix;
+    const paiement = body.paiement;
+    const message = body.message || "";
 
-    // Vérification des informations
+    // Vérification
     if (!nom || !telephone || !offre || !prix || !paiement) {
       return {
         statusCode: 400,
         headers,
         body: JSON.stringify({
           success: false,
-          error: "Informations de commande manquantes."
+          error: "Veuillez remplir tous les champs obligatoires."
         })
       };
     }
@@ -78,38 +76,29 @@ exports.handler = async (event) => {
         headers,
         body: JSON.stringify({
           success: false,
-          error: "Montant incorrect."
+          error: "Le prix indiqué est incorrect."
         })
       };
     }
 
-    // Création de la facture PayDunya
-    const response = await fetch(
+    // Appel PayDunya
+    const paydunyaResponse = await fetch(
       "https://app.paydunya.com/api/v1/checkout-invoice/create",
       {
         method: "POST",
+
         headers: {
           "Content-Type": "application/json",
-          "PAYDUNYA-MASTER-KEY": process.env.paydunya,
-          "PAYDUNYA-PUBLIC-KEY": process.env.Publique,
-          "PAYDUNYA-PRIVATE-KEY": process.env.PRIVATE,
-          "PAYDUNYA-TOKEN": process.env.Token
+          "PAYDUNYA-MASTER-KEY": masterKey,
+          "PAYDUNYA-PUBLIC-KEY": publicKey,
+          "PAYDUNYA-PRIVATE-KEY": privateKey,
+          "PAYDUNYA-TOKEN": token
         },
+
         body: JSON.stringify({
           invoice: {
             total_amount: montant,
-            description:
-              "Commande " +
-              offre +
-              " - Client : " +
-              nom +
-              " - Téléphone : " +
-              telephone,
-
-            customer: {
-              name: nom,
-              phone: telephone
-            }
+            description: `Commande IPCI SERVICE - ${offre} - ${nom} - ${telephone}`
           },
 
           store: {
@@ -117,17 +106,20 @@ exports.handler = async (event) => {
           },
 
           custom_data: {
+            nom: nom,
             telephone: telephone,
             offre: offre,
-            mode_paiement: paiement,
-            message: message || ""
+            paiement: paiement,
+            message: message
           }
         })
       }
     );
 
-    // Lire la réponse PayDunya comme texte
-    const texte = await response.text();
+    // Lire la réponse
+    const texte = await paydunyaResponse.text();
+
+    console.log("Réponse PayDunya :", texte);
 
     if (!texte) {
       return {
@@ -136,30 +128,32 @@ exports.handler = async (event) => {
         body: JSON.stringify({
           success: false,
           error: "PayDunya a renvoyé une réponse vide.",
-          status_paydunya: response.status
+          status: paydunyaResponse.status
         })
       };
     }
 
-    // Conversion en JSON
+    // Convertir en JSON
     let data;
 
     try {
       data = JSON.parse(texte);
-    } catch (e) {
+    } catch (error) {
       return {
         statusCode: 502,
         headers,
         body: JSON.stringify({
           success: false,
-          error: "PayDunya a renvoyé une réponse qui n'est pas du JSON.",
-          status_paydunya: response.status,
-          reponse_paydunya: texte.substring(0, 1000)
+          error: "PayDunya n'a pas renvoyé du JSON.",
+          status: paydunyaResponse.status,
+          reponse: texte.substring(0, 500)
         })
       };
     }
 
-    // PayDunya a refusé la création
+    console.log("Données PayDunya :", JSON.stringify(data));
+
+    // Vérifier la réponse PayDunya
     if (data.response_code !== "00") {
       return {
         statusCode: 400,
@@ -169,38 +163,40 @@ exports.handler = async (event) => {
           error:
             data.response_text ||
             "PayDunya a refusé la création du paiement.",
-          response_code: data.response_code,
-          details: data
+          response_code: data.response_code
         })
       };
     }
 
-    // Vérification de l'URL
-    if (!data.response_text || !data.token) {
+    // Récupérer le lien de paiement
+    const paymentUrl = data.response_text;
+
+    if (!paymentUrl) {
       return {
         statusCode: 502,
         headers,
         body: JSON.stringify({
           success: false,
-          error:
-            "PayDunya a créé la facture mais n'a pas fourni le lien de paiement.",
+          error: "PayDunya n'a pas fourni de lien de paiement.",
           details: data
         })
       };
     }
 
-    // Succès
+    // Réponse finale
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({
         success: true,
-        url: data.response_text,
-        token: data.token
+        url: paymentUrl,
+        token: data.token || null
       })
     };
 
   } catch (error) {
+    console.error("Erreur :", error);
+
     return {
       statusCode: 500,
       headers,
