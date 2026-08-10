@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IPCI SERVICE - Commande</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f6f8;
+      color: #222;
+    }
+
+    header {
+      background: #0b3d91;
+      color: white;
+      text-align: center;
+      padding: 30px 15px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 32px;
+    }
+
+    header p {
+      margin-top: 10px;
+      font-size: 18px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #0b3d91;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 7px;
+      border: 1px solid #ccc;
+      border-radius: 7px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      border: none;
+      border-radius: 7px;
+      background: #0b3d91;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #062b68;
+    }
+
+    .contact {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 16px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #0b3d91;
+      color: white;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>IPCI SERVICE</h1>
+    <p>Votre solution TV et divertissement</p>
+  </header>
+
+  <div class="container">
+
+    <div class="card">
+
+      <h2>Commander votre abonnement</h2>
+
+      <form id="commandeForm">
+
+        <label for="nom">Nom complet</label>
+        <input
+          type="text"
+          id="nom"
+          name="nom"
+          placeholder="Votre nom complet"
+          required
+        >
+
+        <label for="telephone">Numéro de téléphone</label>
+        <input
+          type="tel"
+          id="telephone"
+          name="telephone"
+          placeholder="Votre numéro"
+          required
+        >
+
+        <label for="offre">Choisissez votre offre</label>
+        <select id="offre" name="offre" required>
+          <option value="">-- Choisir une offre --</option>
+          <option value="IPTV 6 mois - 20 000 FCFA">
+            IPTV 6 mois - 20 000 FCFA
+          </option>
+          <option value="IPTV 1 an - 30 000 FCFA">
+            IPTV 1 an - 30 000 FCFA
+          </option>
+          <option value="Box TV - 25 000 FCFA">
+            Box TV - 25 000 FCFA
+          </option>
+        </select>
+
+        <label for="paiement">Mode de paiement</label>
+        <select id="paiement" name="paiement" required>
+          <option value="">-- Choisir --</option>
+          <option value="Orange Money">Orange Money</option>
+          <option value="Wave">Wave</option>
+          <option value="MTN Money">MTN Money</option>
+        </select>
+
+        <label for="message">Message</label>
+        <textarea
+          id="message"
+          name="message"
+          rows="4"
+          placeholder="Informations complémentaires"
+        ></textarea>
+
+        <button type="submit">
+          Envoyer ma commande
+        </button>
+
+      </form>
+
+      <div class="contact">
+        <p><strong>IPCI SERVICE</strong></p>
+        <p>Abonnements IPTV • Box TV • Solutions TV</p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <footer>
+    © 2026 IPCI SERVICE - Tous droits réservés
+  </footer>
+
+  <script>
+    document.getElementById("commandeForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const nom = document.getElementById("nom").value;
+      const telephone = document.getElementById("telephone").value;
+      const offre = document.getElementById("offre").value;
+      const paiement = document.getElementById("paiement").value;
+      const message = document.getElementById("message").value;
+
+      const texte =
+        "Bonjour IPCI SERVICE,%0A%0A" +
+        "Je souhaite passer une commande.%0A%0A" +
+        "Nom : " + encodeURIComponent(nom) + "%0A" +
+        "Téléphone : " + encodeURIComponent(telephone) + "%0A" +
+        "Offre : " + encodeURIComponent(offre) + "%0A" +
+        "Paiement : " + encodeURIComponent(paiement) + "%0A" +
+        "Message : " + encodeURIComponent(message);
+
+      alert("Votre commande est prête. Le paiement sera configuré ensuite.");
+
+      /*
+        Le numéro WhatsApp devra être ajouté ici
+        lorsque tu me donneras le numéro à utiliser.
+      */
+    });
+  </script>
+
+</body>
+            </html>
