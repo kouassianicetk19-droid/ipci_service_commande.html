@@ -1,12 +1,95 @@
 exports.handler = async (event) => {
-  return {
-    statusCode: 200,
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      success: true,
-      message: "CREATE PAIEMENT FONCTIONNE"
-    })
+  const headers = {
+    "Content-Type": "application/json"
   };
+
+  if (event.httpMethod !== "POST") {
+    return {
+      statusCode: 405,
+      headers,
+      body: JSON.stringify({
+        success: false,
+        error: "Méthode non autorisée"
+      })
+    };
+  }
+
+  try {
+    const data = JSON.parse(event.body || "{}");
+
+    const amount = Number(data.prix);
+    const nom = data.nom || "Client IPCI SERVICE";
+    const telephone = data.telephone || "";
+
+    if (!amount || amount <= 0) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({
+          success: false,
+          error: "Montant invalide"
+        })
+      };
+    }
+
+    const response = await fetch(
+      "https://app.paydunya.com/api/v1/checkout-invoice/create",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "PAYDUNYA-MASTER-KEY": process.env.paydunya,
+          "PAYDUNYA-PRIVATE-KEY": process.env.private,
+          "PAYDUNYA-TOKEN": process.env.token
+        },
+        body: JSON.stringify({
+          invoice: {
+            total_amount: amount,
+            description: "Abonnement IPTV - IPCI SERVICE",
+            customer: {
+              name: nom,
+              phone: telephone
+            }
+          },
+          store: {
+            name: "IPCI SERVICE"
+          }
+        })
+      }
+    );
+
+    const result = await response.json();
+
+    if (result.response_code !== "00") {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({
+          success: false,
+          error: result.response_text || "Erreur PayDunya",
+          details: result
+        })
+      };
+    }
+
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({
+        success: true,
+        url: result.response_text,
+        token: result.token
+      })
+    };
+
+  } catch (error) {
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({
+        success: false,
+        error: error.message
+      })
+    };
+  }
 };
