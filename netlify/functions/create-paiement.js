@@ -1,7 +1,15 @@
 exports.handler = async (event) => {
+  // Configuration des en-têtes CORS standards pour les requêtes web
   const headers = {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type"
   };
+
+  // Gestion de la requête de vérification préalable (Preflight OPTIONS)
+  if (event.httpMethod === "OPTIONS") {
+    return { statusCode: 200, headers, body: "" };
+  }
 
   if (event.httpMethod !== "POST") {
     return {
@@ -32,9 +40,12 @@ exports.handler = async (event) => {
       };
     }
 
-    if (!process.env.paydunya ||
-        !process.env.private ||
-        !process.env.token) {
+    // Récupération des variables d'environnement
+    const masterKey = process.env.paydunya || process.env.PAYDUNYA_MASTER_KEY;
+    const privateKey = process.env.private || process.env.PAYDUNYA_PRIVATE_KEY;
+    const tokenKey = process.env.token || process.env.PAYDUNYA_TOKEN;
+
+    if (!masterKey || !privateKey || !tokenKey) {
       return {
         statusCode: 500,
         headers,
@@ -51,9 +62,9 @@ exports.handler = async (event) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "PAYDUNYA-MASTER-KEY": process.env.paydunya,
-          "PAYDUNYA-PRIVATE-KEY": process.env.private,
-          "PAYDUNYA-TOKEN": process.env.token
+          "PAYDUNYA-MASTER-KEY": masterKey,
+          "PAYDUNYA-PRIVATE-KEY": privateKey,
+          "PAYDUNYA-TOKEN": tokenKey
         },
         body: JSON.stringify({
           invoice: {
@@ -62,13 +73,16 @@ exports.handler = async (event) => {
           },
           store: {
             name: "IPCI SERVICE"
+          },
+          customer: {
+            name: nom,
+            phone: telephone
           }
         })
       }
     );
 
     const text = await response.text();
-
     let result;
 
     try {
